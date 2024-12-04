@@ -1,0 +1,55 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bggdb-deploy
+  namespace: bggns
+  labels:
+    project: bgg
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels: # usually a subset of the labels below
+      project: bgg
+      name: bggdb-po
+  template:
+    metadata:
+      name: bggdb-po
+      namespace: bggns # Put the pod in this namespace that is created earlier. If don't specify this, then you're free later to determine which namespace to deploy to
+      labels:
+        project: bgg
+        name: bggdb-po
+
+    spec:
+      containers:
+      - name: bggdb-container
+        image: stackupiss/bgg-database:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3306
+
+---
+apiVersion: v1
+kind: Service # can only route to ports within the namepsace
+
+metadata:
+  name: bggdb-svc
+  namespace: bggns
+  labels:
+    project: bgg
+
+spec:
+  type: ClusterIP # not accessible from outside the cluster
+  selector:
+    project: bgg
+    name: bggdb-po
+  ports:
+  - port: 3306
+    targetPort: 3306 # mysql
+
+
+# After deploy, to test sql:
+# kubectl run mysql -ti --rm --image=mysql:8 -- /bin/sh
+# mysql -uroot -p -hbggdb-svc.bggns.svc.cluster.local
+# show databases
