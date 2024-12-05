@@ -16,7 +16,7 @@ metadata:
 data:
   TZ: Asia/Singapore
   DEFAULT_WORKSPACE: /config/workspace
-  PROXY_DOMAIN: code-139.59.217.207.nip.io # kubectl get svc -A to get the IP of the load balancer
+  PROXY_DOMAIN: codeserver-139.59.217.207.nip.io # kubectl get svc -A to get the IP of the load balancer (my-ingress-ingress-nginx-controller)
 
 ---
 apiVersion: v1
